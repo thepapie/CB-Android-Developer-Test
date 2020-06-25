@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -20,11 +21,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Compares two elementData by date
-        val format = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        // Init date formatting tools
+        val myDateFormat = "dd/MM/yyyy"
+        val format = SimpleDateFormat(myDateFormat, Locale.getDefault())
+        val formatter = DateTimeFormatter.ofPattern(myDateFormat)
 
-        /** Date Edit **/
+        /** DateEdit **/
         val calendar: Calendar = Calendar.getInstance(TimeZone.getDefault())
         val currYear = calendar.get(Calendar.YEAR)
         val currMonth = calendar.get(Calendar.MONTH)
@@ -56,53 +58,61 @@ class MainActivity : AppCompatActivity() {
 
         /** Add Button **/
         addButton.setOnClickListener {
+
+            // Get GTIN and check validity
             val gtin = gtinEdit.text.toString()
-            val date = LocalDate.parse(dateEdit.text.toString(), formatter)
-
-            // Check input validity
-            if (gtin == "")
+            if (gtin == "") {
                 Toast.makeText(this, "Please enter a GTIN", Toast.LENGTH_LONG).show()
-            else if (!isGtinFormat(gtin))
-                Toast.makeText(this, "Invalid GTIN format", Toast.LENGTH_LONG).show()
-            else if (date == null)
-                Toast.makeText(this, "Please enter a valid date", Toast.LENGTH_LONG).show()
-
-            else {
-                // Add datas to corresponding element in list
-                var added = false
-                for (element in data) {
-                    if (gtin == element.gtin) {
-                        if (date < element.date) {
-                            Toast.makeText(
-                                this, "Date changed for reference " + gtin,
-                                Toast.LENGTH_LONG
-                            ).show()
-                            element.date = date
-                        } else
-                            Toast.makeText(
-                                this, "Date not changed for reference " + gtin,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        added = true
-                        break
-                    }
-                }
-                if (!added) {
-                    Toast.makeText(this, "Added reference " + gtin, Toast.LENGTH_LONG).show()
-                    data.add(ElementData(gtin, date))
-                }
-
-                // Update adapter for display
-                data.sortBy { it.date }
-                adapter.data = data
-                adapter.notifyDataSetChanged()
+                return@setOnClickListener
             }
+            else if (!isGtinFormat(gtin)) {
+                Toast.makeText(this, "Invalid GTIN format", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            // Get date and check validity
+            val date: LocalDate
+            try {
+                date = LocalDate.parse(dateEdit.text.toString(), formatter)
+            } catch (e: DateTimeParseException) {
+                Toast.makeText(this, "Please enter a valid date\n(\"dd/mm/yyy\")", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
+            // Add datas to corresponding element in list and notify the change
+            var added = false
+            for (element in data) {
+                if (gtin == element.gtin) {
+                    if (date < element.date) {
+                        Toast.makeText(this, "Date changed for reference " + gtin,
+                            Toast.LENGTH_LONG).show()
+                        element.date = date
+                    }
+                    else
+                        Toast.makeText(this, "Date not changed for reference " + gtin,
+                            Toast.LENGTH_LONG).show()
+                    added = true
+                    break
+                }
+            }
+
+            // Notify if no data where added and why
+            if (!added) {
+                Toast.makeText(this, "Added reference " + gtin, Toast.LENGTH_LONG).show()
+                data.add(ElementData(gtin, date))
+            }
+
+            // Update adapter for display
+            data.sortBy { it.date }
+            adapter.data = data
+            adapter.notifyDataSetChanged()
+
         }
     }
 
     // Return true if str is a valid GTIN
     private fun isGtinFormat(str: String) : Boolean {
-        if (str.length != 8 || str.length !in 12..14)
+        if (str.length != 8 && str.length !in 12..14)
             return false
         str.forEach {
             if (!it.isDigit())

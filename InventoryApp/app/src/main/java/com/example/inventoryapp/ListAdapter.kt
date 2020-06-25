@@ -6,11 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import java.text.DateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 class ListAdapter(val context: Activity, var data: List<ElementData>, val formatter: DateTimeFormatter)
     : RecyclerView.Adapter<ListAdapter.ViewHolder>() {
@@ -41,7 +38,7 @@ class ListAdapter(val context: Activity, var data: List<ElementData>, val format
 
         // Change date color
         if (elementData.date <= currentDate)
-            holder.date.setBackgroundResource(R.color.passed)
+            holder.date.setBackgroundResource(R.color.expired)
         else if (elementData.date <= twoDayslater)
             holder.date.setBackgroundResource(R.color.warning)
         else

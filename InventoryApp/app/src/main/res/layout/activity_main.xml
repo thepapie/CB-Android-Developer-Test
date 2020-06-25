@@ -44,4 +44,14 @@
         android:inputType="number"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:alpha="0.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/recyclerList"
+        app:layout_constraintTop_toTopOf="@+id/recyclerList"
+        app:srcCompat="@mipmap/ic_launcher_foreground" />
 </androidx.constraintlayout.widget.ConstraintLayout>

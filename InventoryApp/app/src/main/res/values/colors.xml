@@ -3,7 +3,7 @@
     <color name="colorPrimary">#92D848</color>
     <color name="colorPrimaryDark">#468C61</color>
     <color name="colorAccent">#4BBA79</color>
-    <color name="passed">#BA4B4B</color>
+    <color name="expired">#BA4B4B</color>
     <color name="warning">#BAB34B</color>
     <color name="safe">#4BBA54</color>
 </resources>
