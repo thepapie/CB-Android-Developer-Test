@@ -37,7 +37,7 @@
 
     <EditText
         android:id="@+id/gtinEdit"
-        android:layout_width="0dp"
+        android:layout_width="175dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Enter GTIN"

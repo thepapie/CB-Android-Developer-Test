@@ -6,9 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import java.text.DateFormat
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
-class ListAdapter(val context: Activity, var data: List<ElementData>, val currentDate: String)
+class ListAdapter(val context: Activity, var data: List<ElementData>, val formatter: DateTimeFormatter)
     : RecyclerView.Adapter<ListAdapter.ViewHolder>() {
+
+    val currentDate = LocalDate.now()
+    val twoDayslater = currentDate.plusDays(2)
 
     class ViewHolder(itemview: View): RecyclerView.ViewHolder(itemview) {
         val gtin: TextView = itemview.findViewById(R.id.gtin)
@@ -29,25 +37,15 @@ class ListAdapter(val context: Activity, var data: List<ElementData>, val curren
 
         // Set text informations
         holder.gtin.text = elementData.gtin
-        holder.date.text = elementData.date
+        holder.date.text = elementData.date.format(formatter)
 
         // Change date color
-        if (isWarning(currentDate, elementData.date))
+        if (elementData.date <= currentDate)
+            holder.date.setBackgroundResource(R.color.passed)
+        else if (elementData.date <= twoDayslater)
             holder.date.setBackgroundResource(R.color.warning)
         else
             holder.date.setBackgroundResource(R.color.safe)
     }
 
-}
-
-fun isWarning(rhs: String, lhs: String) : Boolean {
-    val iRhsDay = rhs.substring(0,1).toInt()
-    val iRhsMonth = rhs.substring(3,4).toInt()
-    val iLhsDay = lhs.substring(0,1).toInt()
-    val iLhsMonth = lhs.substring(3, 4).toInt()
-
-    val iRhs = iRhsMonth * 30 + iRhsDay
-    val iLhs = iLhsMonth * 30 + iLhsDay
-
-    return (iRhs - iLhs) > 2
 }
