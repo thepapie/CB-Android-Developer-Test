@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     // Return true if str is a valid GTIN
     private fun isGtinFormat(str: String) : Boolean {
-        if (str.length < 8 || str.length > 14)
+        if (str.length != 8 || str.length !in 12..14)
             return false
         str.forEach {
             if (!it.isDigit())

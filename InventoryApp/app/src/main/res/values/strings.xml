@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Inventory App</string>
+    <string name="base_date">01/01</string>
+    <string name="base_gtin">00000000</string>
+    <string name="add_button">Add</string>
+    <string name="enter_date">Enter Date</string>
+    <string name="enter_gtin">Enter GTIN</string>
 </resources>
