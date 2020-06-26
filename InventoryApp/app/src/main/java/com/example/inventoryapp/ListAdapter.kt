@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class ListAdapter(val context: Activity, var data: List<ElementData>, val formatter: DateTimeFormatter)
+class ListAdapter(private val context: Activity, var data: List<ElementData>, private val formatter: DateTimeFormatter)
     : RecyclerView.Adapter<ListAdapter.ViewHolder>() {
 
-    val currentDate = LocalDate.now()
-    val twoDayslater = currentDate.plusDays(2)
+    private val currentDate: LocalDate = LocalDate.now()
+    private val twoDayslater: LocalDate = currentDate.plusDays(2)
 
     class ViewHolder(itemview: View): RecyclerView.ViewHolder(itemview) {
         val gtin: TextView = itemview.findViewById(R.id.gtin)
@@ -36,13 +36,12 @@ class ListAdapter(val context: Activity, var data: List<ElementData>, val format
         holder.gtin.text = elementData.gtin
         holder.date.text = elementData.date.format(formatter)
 
-        // Change date color
-        if (elementData.date <= currentDate)
-            holder.date.setBackgroundResource(R.color.expired)
-        else if (elementData.date <= twoDayslater)
-            holder.date.setBackgroundResource(R.color.warning)
-        else
-            holder.date.setBackgroundResource(R.color.safe)
+        // Change date color to warn user
+        when {
+            elementData.date <= currentDate -> holder.date.setBackgroundResource(R.color.expired)
+            elementData.date <= twoDayslater -> holder.date.setBackgroundResource(R.color.warning)
+            else -> holder.date.setBackgroundResource(R.color.safe)
+        }
     }
 
 }

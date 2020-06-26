@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.*
@@ -27,10 +26,13 @@ class MainActivity : AppCompatActivity() {
         val formatter = DateTimeFormatter.ofPattern(myDateFormat)
 
         /** DateEdit **/
+        // Init tracking calendar
         val calendar: Calendar = Calendar.getInstance(TimeZone.getDefault())
         val currYear = calendar.get(Calendar.YEAR)
         val currMonth = calendar.get(Calendar.MONTH)
         val currDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        // Init date picker to display
         val picker = DatePickerDialog(this,
             DatePickerDialog.OnDateSetListener {
                     _, year, month, dayOfMonth ->
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
                 dateEdit.setText(format.format(calendar.time))
             }, currYear, currMonth, currDay)
 
+        // Set dateEdit's widget parameters
         dateEdit.showSoftInputOnFocus = false
         dateEdit.setOnTouchListener { view, event ->
             if (event?.action == MotionEvent.ACTION_DOWN)
@@ -58,7 +61,6 @@ class MainActivity : AppCompatActivity() {
 
         /** Add Button **/
         addButton.setOnClickListener {
-
             // Get GTIN and check validity
             val gtin = gtinEdit.text.toString()
             if (gtin == "") {
@@ -83,22 +85,17 @@ class MainActivity : AppCompatActivity() {
             var added = false
             for (element in data) {
                 if (gtin == element.gtin) {
-                    if (date < element.date) {
-                        Toast.makeText(this, "Date changed for reference " + gtin,
-                            Toast.LENGTH_LONG).show()
-                        element.date = date
-                    }
-                    else
-                        Toast.makeText(this, "Date not changed for reference " + gtin,
-                            Toast.LENGTH_LONG).show()
+                    element.date = date
                     added = true
+                    Toast.makeText(this, "Date changed for reference $gtin",
+                        Toast.LENGTH_LONG).show()
                     break
                 }
             }
 
             // Notify if no data where added and why
             if (!added) {
-                Toast.makeText(this, "Added reference " + gtin, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Added reference $gtin", Toast.LENGTH_LONG).show()
                 data.add(ElementData(gtin, date))
             }
 
@@ -106,7 +103,6 @@ class MainActivity : AppCompatActivity() {
             data.sortBy { it.date }
             adapter.data = data
             adapter.notifyDataSetChanged()
-
         }
     }
 
